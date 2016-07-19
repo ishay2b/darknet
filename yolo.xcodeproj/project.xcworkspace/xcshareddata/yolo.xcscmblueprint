@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "73B71BC17C4EBB140B95BB2DC34F63C8626DB3F3",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "61C72E10E6BF6B577530317F8933F4884AE085D7" : 0,
+    "73B71BC17C4EBB140B95BB2DC34F63C8626DB3F3" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "392AD61B-0808-4260-B63F-45F3B6F7818E",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "61C72E10E6BF6B577530317F8933F4884AE085D7" : "",
+    "73B71BC17C4EBB140B95BB2DC34F63C8626DB3F3" : "darknet\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "yolo",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "yolo.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/bitbucket.org\/ishay2b\/projects.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "61C72E10E6BF6B577530317F8933F4884AE085D7"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:ishay2b\/darknet.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "73B71BC17C4EBB140B95BB2DC34F63C8626DB3F3"
+    }
+  ]
+}
