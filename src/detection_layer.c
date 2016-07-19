@@ -2,7 +2,7 @@
 #include "activations.h"
 #include "softmax_layer.h"
 #include "blas.h"
-#include "box.h"
+#include "dbox.h"
 #include "cuda.h"
 #include "utils.h"
 #include <stdio.h>
@@ -93,13 +93,13 @@ void forward_detection_layer(const detection_layer l, network_state state)
                     avg_allcat += l.output[class_index+j];
                 }
 
-                box truth = float_to_box(state.truth + truth_index + 1 + l.classes);
+                BOX truth = float_to_box(state.truth + truth_index + 1 + l.classes);
                 truth.x /= l.side;
                 truth.y /= l.side;
 
                 for(j = 0; j < l.n; ++j){
                     int box_index = index + locations*(l.classes + l.n) + (i*l.n + j) * l.coords;
-                    box out = float_to_box(l.output + box_index);
+                    BOX out = float_to_box(l.output + box_index);
                     out.x /= l.side;
                     out.y /= l.side;
 
@@ -138,7 +138,7 @@ void forward_detection_layer(const detection_layer l, network_state state)
                 int box_index = index + locations*(l.classes + l.n) + (i*l.n + best_index) * l.coords;
                 int tbox_index = truth_index + 1 + l.classes;
 
-                box out = float_to_box(l.output + box_index);
+                BOX out = float_to_box(l.output + box_index);
                 out.x /= l.side;
                 out.y /= l.side;
                 if (l.sqrt) {

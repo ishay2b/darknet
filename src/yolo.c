@@ -3,7 +3,7 @@
 #include "cost_layer.h"
 #include "utils.h"
 #include "parser.h"
-#include "box.h"
+#include "dbox.h"
 #include "demo.h"
 
 #ifdef OPENCV
@@ -84,7 +84,7 @@ void train_yolo(char *cfgfile, char *weightfile)
     save_weights(net, buff);
 }
 
-void convert_detections(float *predictions, int classes, int num, int square, int side, int w, int h, float thresh, float **probs, box *boxes, int only_objectness)
+void convert_detections(float *predictions, int classes, int num, int square, int side, int w, int h, float thresh, float **probs, BOX *boxes, int only_objectness)
 {
     int i,j,n;
     //int per_cell = 5*num+classes;
@@ -112,7 +112,7 @@ void convert_detections(float *predictions, int classes, int num, int square, in
     }
 }
 
-void print_yolo_detections(FILE **fps, char *id, box *boxes, float **probs, int total, int classes, int w, int h)
+void print_yolo_detections(FILE **fps, char *id, BOX *boxes, float **probs, int total, int classes, int w, int h)
 {
     int i, j;
     for(i = 0; i < total; ++i){
@@ -161,7 +161,7 @@ void validate_yolo(char *cfgfile, char *weightfile)
         snprintf(buff, 1024, "%s%s.txt", base, voc_names[j]);
         fps[j] = fopen(buff, "w");
     }
-    box *boxes = calloc(side*side*l.n, sizeof(box));
+    BOX *boxes = calloc(side*side*l.n, sizeof(BOX));
     float **probs = calloc(side*side*l.n, sizeof(float *));
     for(j = 0; j < side*side*l.n; ++j) probs[j] = calloc(classes, sizeof(float *));
 
@@ -249,7 +249,7 @@ void validate_yolo_recall(char *cfgfile, char *weightfile)
         snprintf(buff, 1024, "%s%s.txt", base, voc_names[j]);
         fps[j] = fopen(buff, "w");
     }
-    box *boxes = calloc(side*side*l.n, sizeof(box));
+    BOX *boxes = calloc(side*side*l.n, sizeof(BOX));
     float **probs = calloc(side*side*l.n, sizeof(float *));
     for(j = 0; j < side*side*l.n; ++j) probs[j] = calloc(classes, sizeof(float *));
 
@@ -288,7 +288,7 @@ void validate_yolo_recall(char *cfgfile, char *weightfile)
         }
         for (j = 0; j < num_labels; ++j) {
             ++total;
-            box t = {truth[j].x, truth[j].y, truth[j].w, truth[j].h};
+            BOX t = {truth[j].x, truth[j].y, truth[j].w, truth[j].h};
             float best_iou = 0;
             for(k = 0; k < side*side*l.n; ++k){
                 float iou = box_iou(boxes[k], t);
@@ -324,7 +324,7 @@ void test_yolo(char *cfgfile, char *weightfile, char *filename, float thresh)
     char *input = buff;
     int j;
     float nms=.5;
-    box *boxes = calloc(l.side*l.side*l.n, sizeof(box));
+    BOX *boxes = calloc(l.side*l.side*l.n, sizeof(BOX));
     float **probs = calloc(l.side*l.side*l.n, sizeof(float *));
     for(j = 0; j < l.side*l.side*l.n; ++j) probs[j] = calloc(l.classes, sizeof(float *));
     while(1){

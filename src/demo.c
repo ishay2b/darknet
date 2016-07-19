@@ -3,7 +3,7 @@
 #include "cost_layer.h"
 #include "utils.h"
 #include "parser.h"
-#include "box.h"
+#include "dbox.h"
 #include "image.h"
 #include "demo.h"
 #include <sys/time.h>
@@ -13,14 +13,14 @@
 #ifdef OPENCV
 #include "opencv2/highgui/highgui_c.h"
 #include "opencv2/imgproc/imgproc_c.h"
-void convert_detections(float *predictions, int classes, int num, int square, int side, int w, int h, float thresh, float **probs, box *boxes, int only_objectness);
+void convert_detections(float *predictions, int classes, int num, int square, int side, int w, int h, float thresh, float **probs, BOX *boxes, int only_objectness);
 
 static char **demo_names;
 static image *demo_labels;
 static int demo_classes;
 
 static float **probs;
-static box *boxes;
+static BOX *boxes;
 static network net;
 static image in   ;
 static image in_s ;
@@ -115,7 +115,7 @@ void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const ch
     for(j = 0; j < FRAMES; ++j) predictions[j] = (float *) calloc(l.outputs, sizeof(float));
     for(j = 0; j < FRAMES; ++j) images[j] = make_image(1,1,3);
 
-    boxes = (box *)calloc(l.side*l.side*l.n, sizeof(box));
+    boxes = (BOX *)calloc(l.side*l.side*l.n, sizeof(BOX));
     probs = (float **)calloc(l.side*l.side*l.n, sizeof(float *));
     for(j = 0; j < l.side*l.side*l.n; ++j) probs[j] = (float *)calloc(l.classes, sizeof(float *));
 

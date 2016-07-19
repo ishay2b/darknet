@@ -26,7 +26,7 @@ typedef struct{
     int *indexes;
     int shallow;
     int *num_boxes;
-    box **boxes;
+    BOX **boxes;
 } data;
 
 typedef enum {

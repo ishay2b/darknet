@@ -88,7 +88,7 @@ void draw_box_width(image a, int x1, int y1, int x2, int y2, int w, float r, flo
     }
 }
 
-void draw_bbox(image a, box bbox, int w, float r, float g, float b)
+void draw_bbox(image a, BOX bbox, int w, float r, float g, float b)
 {
     int left  = (bbox.x-bbox.w/2)*a.w;
     int right = (bbox.x+bbox.w/2)*a.w;
@@ -101,7 +101,7 @@ void draw_bbox(image a, box bbox, int w, float r, float g, float b)
     }
 }
 
-void draw_detections(image im, int num, float thresh, box *boxes, float **probs, char **names, image *labels, int classes)
+void draw_detections(image im, int num, float thresh, BOX *boxes, float **probs, char **names, image *labels, int classes)
 {
     int i;
 
@@ -120,7 +120,7 @@ void draw_detections(image im, int num, float thresh, box *boxes, float **probs,
             rgb[0] = red;
             rgb[1] = green;
             rgb[2] = blue;
-            box b = boxes[i];
+            BOX b = boxes[i];
 
             int left  = (b.x-b.w/2.)*im.w;
             int right = (b.x+b.w/2.)*im.w;

@@ -3,7 +3,7 @@
 #include "cost_layer.h"
 #include "utils.h"
 #include "parser.h"
-#include "box.h"
+#include "dbox.h"
 
 #ifdef OPENCV
 #include "opencv2/highgui/highgui_c.h"

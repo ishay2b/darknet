@@ -5,7 +5,7 @@
 #include "cost_layer.h"
 #include "utils.h"
 #include "parser.h"
-#include "box.h"
+#include "dbox.h"
 
 void train_compare(char *cfgfile, char *weightfile)
 {

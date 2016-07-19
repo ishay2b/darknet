@@ -8,7 +8,7 @@ extern "C" {
 #include "cost_layer.h"
 #include "utils.h"
 #include "parser.h"
-#include "box.h"
+#include "dbox.h"
 #include "image.h"
 #include <sys/time.h>
 }
@@ -17,13 +17,13 @@ extern "C" {
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 extern "C" image ipl_to_image(IplImage* src);
-extern "C" void convert_yolo_detections(float *predictions, int classes, int num, int square, int side, int w, int h, float thresh, float **probs, box *boxes, int only_objectness);
+extern "C" void convert_yolo_detections(float *predictions, int classes, int num, int square, int side, int w, int h, float thresh, float **probs, BOX *boxes, int only_objectness);
 
 extern "C" char *voc_names[];
 extern "C" image voc_labels[];
 
 static float **probs;
-static box *boxes;
+static BOX *boxes;
 static network net;
 static image in   ;
 static image in_s ;
@@ -82,7 +82,7 @@ extern "C" void demo_yolo(char *cfgfile, char *weightfile, float thresh, int cam
     detection_layer l = net.layers[net.n-1];
     int j;
 
-    boxes = (box *)calloc(l.side*l.side*l.n, sizeof(box));
+    boxes = (BOX *)calloc(l.side*l.side*l.n, sizeof(BOX));
     probs = (float **)calloc(l.side*l.side*l.n, sizeof(float *));
     for(j = 0; j < l.side*l.side*l.n; ++j) probs[j] = (float *)calloc(l.classes, sizeof(float *));
 
