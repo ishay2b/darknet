@@ -445,10 +445,13 @@ void forward_convolutional_layer(convolutional_layer l, network_state state)
     int k = l.size*l.size*l.c;
     int n = out_h*out_w;
 
-    if (l.xnor && l.c%32 == 0 && AI2) {
+#if AI2
+    if (l.xnor && l.c%32 == 0) {
         forward_xnor_layer(l, state);
         printf("xnor\n");
-    } else {
+    } else
+#endif
+    {
 
         float *a = l.filters;
         float *b = state.workspace;
