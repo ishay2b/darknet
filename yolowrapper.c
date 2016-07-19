@@ -95,13 +95,14 @@ static void test_yolo(network *net, char *filename, float thresh){
 
 
 static PyObject *
-test_yolo_wrapper(PyObject *self, PyObject *args)
+test_yolo_wrapper(PyObject *self, PyObject *args) /* (char *configPath, char *weightsPath, float threshold) */
 {
     
     PyObject *netpy=NULL;// &args[0]; //load_network("cfg/yolo.cfg", "yolo.weights");
     PyObject *imagePathO=NULL;
     PyObject *threshO=NULL;
 
+    //Extract the 3 parameters need
     if (!PyArg_UnpackTuple(args, "load_network", 3, 3, &netpy, &imagePathO,&threshO))
     {
         return NULL;
@@ -128,8 +129,8 @@ hello(PyObject *self, PyObject *args)
 
 
 static PyMethodDef yoloMethods[] = {
-    {"test",  test_yolo_wrapper, METH_VARARGS, "Execute a shell command."},
-    {"load_network",  load_network, METH_VARARGS, "Execute a shell command."},
+    {"test",  test_yolo_wrapper, METH_VARARGS, "Test Image From Disk(network *net, char *imagePath, float threshold)"},
+    {"load_network",  load_network, METH_VARARGS, "Load network(conts char*cfg, const char*weights)"},
     
     {"hello",  hello, METH_VARARGS, "hello"},
     {NULL, NULL, 0, NULL}        /* Sentinel */

@@ -11,21 +11,24 @@ def pkgconfig(*packages, **kw):
     return kw
 
 
-opencv=pkgconfig('opencv')
+opencv=pkgconfig('opencv') # Get opencv include dirs, library, library dirs
 
-include_dirs =['src']
-include_dirs.extend(opencv['include_dirs'])
+include_dirs =['src'] # Darknet src folder
+include_dirs.extend(opencv['include_dirs']) # extend with open cv includes
+libraries=opencv['libraries'] # open cv is the only 3ed needed for this python compilation
+library_dirs=opencv['library_dirs'] # open cv library dirs
 
-print "include_dirs", include_dirs
+if 0: # switch debug compilation
+    extra_compile_args=['-g','-O0','-DOPENCV']
+else:
+    extra_compile_args=['-g','-O3','-DOPENCV','-DNDEBUG']
 
-libraries=opencv['libraries']
-library_dirs=opencv['library_dirs']
 
 module1 = Extension('yolo',
                     include_dirs = include_dirs,
                     libraries = libraries,
                     library_dirs = library_dirs,
-                    extra_compile_args=['-g','-O0','-DOPENCV'],
+                    extra_compile_args=extra_compile_args,
                     sources = [
                                'yolowrapper.c',
                                'src/rnn.c',
