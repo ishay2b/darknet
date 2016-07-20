@@ -18,7 +18,7 @@ include_dirs.extend(opencv['include_dirs']) # extend with open cv includes
 libraries=opencv['libraries'] # open cv is the only 3ed needed for this python compilation
 library_dirs=opencv['library_dirs'] # open cv library dirs
 
-if 0: # switch debug compilation
+if 1: # switch debug compilation
     extra_compile_args=['-g','-O0','-DOPENCV']
 else:
     extra_compile_args=['-g','-O3','-DOPENCV','-DNDEBUG']
@@ -89,4 +89,14 @@ setup (name = 'yolo',
        version = '1.0',
        description = 'yolo python wrapper',
        ext_modules = [module1])
+
+'''
+import python.YOLO
+myYolo=YOLO('cfg/yolo-small.cfg', 'yolo-small.weights')
+image=cv2.imread('data/dog.jpg')
+res=myYolo.test(image)
+'''
+
+
+
 

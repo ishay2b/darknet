@@ -309,6 +309,21 @@ void validate_yolo_recall(char *cfgfile, char *weightfile)
     }
 }
 
+void plot_predictions(image im, layer l, float thresh, BOX *boxes, image sized, float **probs){
+    //draw_detections(im, l.side*l.side*l.n, thresh, boxes, probs, voc_names, voc_labels, 20);
+    draw_detections(im, l.side*l.side*l.n, thresh, boxes, probs, voc_names, voc_labels, 20);
+    save_image(im, "predictions");
+    show_image(im, "predictions");
+    
+    show_image(sized, "resized");
+    free_image(im);
+    free_image(sized);
+#ifdef OPENCV
+    cvWaitKey(0);
+    cvDestroyAllWindows();
+#endif
+}
+
 void test_yolo(char *cfgfile, char *weightfile, char *filename, float thresh)
 {
 
@@ -345,21 +360,10 @@ void test_yolo(char *cfgfile, char *weightfile, char *filename, float thresh)
         printf("%s: Predicted in %f seconds.\n", input, sec(clock()-time));
         convert_detections(predictions, l.classes, l.n, l.sqrt, l.side, 1, 1, thresh, probs, boxes, 0);
         if (nms) do_nms_sort(boxes, probs, l.side*l.side*l.n, l.classes, nms);
-        //draw_detections(im, l.side*l.side*l.n, thresh, boxes, probs, voc_names, voc_labels, 20);
-        draw_detections(im, l.side*l.side*l.n, thresh, boxes, probs, voc_names, voc_labels, 20);
-        save_image(im, "predictions");
-        show_image(im, "predictions");
-
-        show_image(sized, "resized");
-        free_image(im);
-        free_image(sized);
-#ifdef OPENCV
-        cvWaitKey(0);
-        cvDestroyAllWindows();
-#endif
-        if (filename) break;
+        plot_predictions(im, l,  thresh, boxes, sized, probs);
     }
 }
+
 
 void run_yolo(int argc, char **argv)
 {

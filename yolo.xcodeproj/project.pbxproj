@@ -105,6 +105,8 @@
 		D7384C1B1D3E2F0600A282A9 /* YoloFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7384BB01D3E1AB700A282A9 /* YoloFramework.framework */; };
 		D7384C221D3E6F6200A282A9 /* yolowrapper.c in Sources */ = {isa = PBXBuildFile; fileRef = D7384C1F1D3E34B000A282A9 /* yolowrapper.c */; };
 		D7384C231D3E7B5B00A282A9 /* yolowrapper.c in Sources */ = {isa = PBXBuildFile; fileRef = D7384C1F1D3E34B000A282A9 /* yolowrapper.c */; };
+		D751530A1D3FF03B0052E746 /* DetectionBox.h in Headers */ = {isa = PBXBuildFile; fileRef = D75153091D3FF03B0052E746 /* DetectionBox.h */; };
+		D751530C1D3FF1F20052E746 /* DetectionBox.c in Sources */ = {isa = PBXBuildFile; fileRef = D751530B1D3FF1F20052E746 /* DetectionBox.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -234,6 +236,9 @@
 		D7384C1D1D3E345200A282A9 /* setup.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = setup.py; sourceTree = "<group>"; };
 		D7384C1F1D3E34B000A282A9 /* yolowrapper.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = yolowrapper.c; sourceTree = "<group>"; };
 		D7384C211D3E507300A282A9 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		D75153091D3FF03B0052E746 /* DetectionBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetectionBox.h; sourceTree = "<group>"; };
+		D751530B1D3FF1F20052E746 /* DetectionBox.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DetectionBox.c; sourceTree = "<group>"; };
+		D7A74C191D4030370037B54A /* python */ = {isa = PBXFileReference; lastKnownFileType = folder; path = python; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -355,6 +360,8 @@
 				D72145401D3DFF8400DA6375 /* xnor_layer.c */,
 				D72145411D3DFF8400DA6375 /* xnor_layer.h */,
 				D72145421D3DFF8400DA6375 /* yolo.c */,
+				D75153091D3FF03B0052E746 /* DetectionBox.h */,
+				D751530B1D3FF1F20052E746 /* DetectionBox.c */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -371,6 +378,7 @@
 		D74B49AA1D3DFED800E9F3C9 = {
 			isa = PBXGroup;
 			children = (
+				D7A74C191D4030370037B54A /* python */,
 				D7384C211D3E507300A282A9 /* Makefile */,
 				D7384C1F1D3E34B000A282A9 /* yolowrapper.c */,
 				D7384C1D1D3E345200A282A9 /* setup.py */,
@@ -423,6 +431,7 @@
 				D7384BD81D3E2EC100A282A9 /* cuda.h in Headers */,
 				D7384BC71D3E2EC100A282A9 /* classifier.h in Headers */,
 				D7384BBE1D3E2EC100A282A9 /* avgpool_layer.h in Headers */,
+				D751530A1D3FF03B0052E746 /* DetectionBox.h in Headers */,
 				D7384BDC1D3E2EC100A282A9 /* dbox.h in Headers */,
 				D7384C0F1D3E2EC100A282A9 /* stb_image.h in Headers */,
 				D7384BCA1D3E2EC100A282A9 /* col2im.h in Headers */,
@@ -560,6 +569,7 @@
 				D7384BF61D3E2EC100A282A9 /* matrix.c in Sources */,
 				D7384BD01D3E2EC100A282A9 /* cost_layer.c in Sources */,
 				D7384BDD1D3E2EC100A282A9 /* deconvolutional_layer.c in Sources */,
+				D751530C1D3FF1F20052E746 /* DetectionBox.c in Sources */,
 				D7384BDA1D3E2EC100A282A9 /* data.c in Sources */,
 				D7384C0B1D3E2EC100A282A9 /* shortcut_layer.c in Sources */,
 				D7384BD31D3E2EC100A282A9 /* crnn_layer.c in Sources */,
