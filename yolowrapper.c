@@ -8,12 +8,15 @@
 #include "dbox.h"
 #include "demo.h"
 
+#include "DetectionBox.h"
+
+
 #ifdef OPENCV
 #include <Python.h>
 #include "opencv2/highgui/highgui_c.h"
 #endif
 
-#include "DetectionBox.h"
+
 
 extern char *voc_names[] ;
 /*= {"aeroplane", "bicycle", "bird", "boat", "bottle", "bus", "car", "cat", "chair", "cow", "diningtable", "dog", "horse", "motorbike", "person", "pottedplant", "sheep", "sofa", "train", "tvmonitor"}; */
@@ -24,19 +27,18 @@ static network globalNetwork; // Hack
 
 extern network * load_network(const char* cfgfile, const char* weights)
 {
+    srand(2222222);
+
     globalNetwork = parse_network_cfg(cfgfile);
     if(weights){
         load_weights(&globalNetwork, weights);
     }
     
     set_batch_network(&globalNetwork, 1);
-    printf("c sending python %p\n", (void*)&globalNetwork);
     
     return &globalNetwork;
 }
 
-const int MAX_DET_BOX=30;
-typedef DetectionBox DetBoxArray[MAX_DET_BOX];
 
 int translate_detections(DetectionBox *detBoxArray, image im, int num, float thresh, BOX *boxes, float **probs, char **names, int classes)
 {
@@ -97,22 +99,16 @@ extern int test_yolo_cv(network *net,
     
     
     detection_layer l = net->layers[net->n-1];
-    srand(2222222);
     clock_t time;
-    char buff[256];
-    char *input = buff;
     int j;
     float nms=.5;
     BOX *boxes = calloc(l.side*l.side*l.n, sizeof(BOX));
     float **probs = calloc(l.side*l.side*l.n, sizeof(float *));
     for(j = 0; j < l.side*l.side*l.n; ++j) probs[j] = calloc(l.classes, sizeof(float *));
 
-    //image im = load_image_color(input,0,0);
-    //image sized = resize_image(im, net->w, net->h);
-    float *X = im.data;
     time=clock();
-    float *predictions = network_predict(*net, X);
-    printf("%s: Predicted in %f seconds.\n", input, sec(clock()-time));
+    float *predictions = network_predict(*net, data);
+    printf("Predicted in %f seconds.\n", sec(clock()-time));
     convert_detections(predictions, l.classes, l.n, l.sqrt, l.side, 1, 1, thresh, probs, boxes, 0);
     if (nms) do_nms_sort(boxes, probs, l.side*l.side*l.n, l.classes, nms);
     int num_objects=translate_detections(detBoxArray, im,  l.side*l.side*l.n, thresh, boxes, probs, voc_names, 20);

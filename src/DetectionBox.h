@@ -19,4 +19,8 @@ typedef struct DetectionBox{ // Actually will be treated as array of 8 floats in
 
 DetectionBox detbox(BOX a, int class_indexP, float probabilityP);
 
+#define MAX_DET_BOX 30
+typedef DetectionBox DetBoxArray[MAX_DET_BOX];
+
+
 #endif

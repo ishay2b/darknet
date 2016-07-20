@@ -35,14 +35,43 @@ class YOLO():
             @output bgr split chanels, resized, 0..1, continues in memory
         '''
         image=cv2.resize(image, (self.h,self.w))
-        image=numpy.array(cv2.split(image), dtype='f4', order='C')
-        image=image/255.
+        image=numpy.array(cv2.split(image), dtype='f4', order='C') # make sure it is contiuos (C)
+        image=image/255. # Scale to 0..1
         return image
+
+    def testPreprocessed(self, image):
+        '''
+        extern int test_yolo_cv(network *net,
+        int h,
+        int w,
+        int c,
+        float *data,
+        float thresh,
+        float*predictions)
+        '''
+        self.res=numpy.zeros(self.MAX_BOX*8, dtype='f4', order='CW') # Allocate continuos writable storage for result (float*)
+        num_objects=self.dll.test_yolo_cv(self.net,
+                                          c_int(self.h),
+                                          c_int(self.w),
+                                          c_int(self.c),
+                                          c_void_p(image.ctypes.data),
+                                          c_float(0.1),
+                                          c_void_p(self.res.ctypes.data)
+                                          )
+                                     
+        return YOLO.parse_results(num_objects,self.res) # from float * to python objects
     
+    def test(self, image):
+        '''
+             test a given image and return python Prediction list.
+        '''
+        return self.testPreprocessed(self.preprocess(image))
+
+
     @staticmethod
     def parse_results(num_objects, res):
         ''' parse the float * c into python code
-        '''
+            '''
         p=[]
         z=0
         for i in range(num_objects):
@@ -57,35 +86,15 @@ class YOLO():
             
             z+=8 # skip 8 due to alinment
         return p
+    
+    
 
-    def testPreprocessed(self, image):
-        '''
-        extern int test_yolo_cv(network *net,
-        int h,
-        int w,
-        int c,
-        float *data,
-        float thresh,
-        float*predictions)
-        '''
-        self.res=numpy.zeros(self.MAX_BOX*8, dtype='f4', order='CW')
-        num_objects=self.dll.test_yolo_cv(self.net, c_int(self.h),
-                                     c_int(self.w),
-                                     c_int(self.c) ,
-                                     c_void_p(image.ctypes.data),
-                                     c_float(0.1),
-                                     c_void_p(self.res.ctypes.data))
-                                     
-        return YOLO.parse_results(num_objects,self.res)
-
-
-    def test(self, image):
-        return self.testPreprocessed(self.preprocess(image))
 
 if __name__=='__main__':
+    ''' Usage example '''
     myYolo=YOLO('cfg/yolo-small.cfg', 'yolo-small.weights')
     image=cv2.imread('data/dog.jpg')
     res=myYolo.test(image)
 
-    print "res", res
+    print "first res", res[0]
 
