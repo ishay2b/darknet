@@ -3,6 +3,8 @@
 from distutils.core import setup, Extension
 #from distutils.extension import Extension
 import commands
+import numpy, os
+
 
 def pkgconfig(*packages, **kw):
     flag_map = {'-I': 'include_dirs', '-L': 'library_dirs', '-l': 'libraries'}
@@ -13,7 +15,7 @@ def pkgconfig(*packages, **kw):
 
 opencv=pkgconfig('opencv') # Get opencv include dirs, library, library dirs
 
-include_dirs =['src'] # Darknet src folder
+include_dirs =['src', numpy.get_include()] # Darknet src folder
 include_dirs.extend(opencv['include_dirs']) # extend with open cv includes
 libraries=opencv['libraries'] # open cv is the only 3ed needed for this python compilation
 library_dirs=opencv['library_dirs'] # open cv library dirs
@@ -85,6 +87,7 @@ module1 = Extension('yolo',
 setup (name = 'yolo',
        version = '1.0',
        description = 'yolo python wrapper',
+       data_files=[('lib/python2.7/site-packages', ['python/YOLO.py'])],
        ext_modules = [module1])
 
 '''
