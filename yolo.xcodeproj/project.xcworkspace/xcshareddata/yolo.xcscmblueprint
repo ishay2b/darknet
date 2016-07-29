@@ -4,11 +4,13 @@
 
   },
   "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "9AE784A3F4EF033AA086A61CE8BBB405B19624BB" : 0,
     "61C72E10E6BF6B577530317F8933F4884AE085D7" : 0,
     "73B71BC17C4EBB140B95BB2DC34F63C8626DB3F3" : 0
   },
   "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "392AD61B-0808-4260-B63F-45F3B6F7818E",
   "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "9AE784A3F4EF033AA086A61CE8BBB405B19624BB" : "Labeler\/",
     "61C72E10E6BF6B577530317F8933F4884AE085D7" : "",
     "73B71BC17C4EBB140B95BB2DC34F63C8626DB3F3" : "darknet\/"
   },
@@ -25,6 +27,11 @@
       "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:ishay2b\/darknet.git",
       "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
       "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "73B71BC17C4EBB140B95BB2DC34F63C8626DB3F3"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:gileez\/Labeler.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "9AE784A3F4EF033AA086A61CE8BBB405B19624BB"
     }
   ]
 }
