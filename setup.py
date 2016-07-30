@@ -4,6 +4,8 @@ from distutils.core import setup, Extension
 #from distutils.extension import Extension
 import commands
 import numpy, os
+from numpy.distutils.misc_util import get_info
+
 
 
 def pkgconfig(*packages, **kw):
@@ -13,12 +15,21 @@ def pkgconfig(*packages, **kw):
     return kw
 
 
-opencv=pkgconfig('opencv') # Get opencv include dirs, library, library dirs
+include_dirs =['src'] # Darknet src folder
+libraries=[]
+library_dirs=[]
 
-include_dirs =['src', numpy.get_include()] # Darknet src folder
+#Fill OpenCV paths
+opencv=pkgconfig('opencv') # Get opencv include dirs, library, library dirs
 include_dirs.extend(opencv['include_dirs']) # extend with open cv includes
-libraries=opencv['libraries'] # open cv is the only 3ed needed for this python compilation
-library_dirs=opencv['library_dirs'] # open cv library dirs
+libraries.extend(opencv['libraries']) # open cv is the only 3ed needed for this python compilation
+library_dirs.extend(opencv['library_dirs']) # open cv library dirs
+
+#Fill numpy paths
+npinfo  = get_info('npymath')
+include_dirs.extend(npinfo['include_dirs'])
+libraries.extend(npinfo['libraries'])
+library_dirs.extend(npinfo['library_dirs']) # open cv library dirs
 
 extra_compile_args=['-g','-O3','-DOPENCV','-DNDEBUG']
 

@@ -17,6 +17,7 @@
 #endif
 
 
+#include "numpy/arrayobject.h"
 
 extern char *voc_names[] ;
 /*= {"aeroplane", "bicycle", "bird", "boat", "bottle", "bus", "car", "cat", "chair", "cow", "diningtable", "dog", "horse", "motorbike", "person", "pottedplant", "sheep", "sofa", "train", "tvmonitor"}; */
@@ -153,7 +154,7 @@ PyMODINIT_FUNC
 inityolo(void)
 {
     yoloContext = Py_InitModule("yolo", yoloMethods);
-   // import_array();  // Must be present for NumPy.  Called first after above line.
+    import_array();  // Must be present for NumPy.  Called first after above line.
     
     if (yoloContext == NULL)
         return;
