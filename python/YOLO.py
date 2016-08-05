@@ -1,12 +1,16 @@
 '''
     YOLO python wrapper calling yolo.so
 '''
-
+import sys, os
+sys.path.append(os.path.dirname(__file__))
 import yolo
 from ctypes import *
 import numpy
 import cv2
 
+#classes = ["aeroplane", "bicycle", "bird", "boat", "bottle", "bus",
+#           "car", "cat", "chair", "cow", "diningtable", "dog", "horse",
+#           "motorbike", "person", "pottedplant", "sheep", "sofa", "train", "tvmonitor"]
 
 class Detection():
     def __repr__(self):
@@ -49,7 +53,7 @@ class YOLO():
         float thresh,
         float*predictions)
         '''
-        self.res=numpy.zeros(self.MAX_BOX*8, dtype='f4', order='CW') # Allocate continuos writable storage for result (float*)
+        self.res=numpy.zeros(self.MAX_BOX*8, dtype='f4', order='C') # Allocate continuos writable storage for result (float*)
         num_objects=self.dll.test_yolo_cv(self.net,
                                           c_int(self.h),
                                           c_int(self.w),
@@ -74,17 +78,17 @@ class YOLO():
             '''
         p=[]
         z=0
-        for i in range(num_objects):
+        for _ in range(num_objects):
             d=Detection()
             d.x=res[z+0]
             d.y=res[z+1]
             d.w=res[z+2]
             d.h=res[z+3]
-            d.index=res[z+4]
+            d.index=int(res[z+4])
             d.prob=res[z+5]
             p.append(d)
             
-            z+=8 # skip 8 due to alinment
+            z+=8 # skip 8 due to alignment
         return p
     
     
@@ -92,8 +96,9 @@ class YOLO():
 
 if __name__=='__main__':
     ''' Usage example '''
-    myYolo=YOLO('cfg/yolo-small.cfg', 'yolo-small.weights')
-    image=cv2.imread('data/dog.jpg')
+    HOMEDIR = os.path.join(os.path.dirname(__file__),'../')
+    myYolo=YOLO(HOMEDIR+'cfg/yolo-small.cfg', HOMEDIR+'yolo-small.weights')
+    image=cv2.imread(HOMEDIR+'data/person.jpg')
     res=myYolo.test(image)
 
     print "first res", res[0]
