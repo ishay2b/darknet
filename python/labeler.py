@@ -18,13 +18,14 @@ import copy
 #    cv2.startWindowThread()
 
 # GLOBALS
-ALLOWED_GAP = 2
+ALLOWED_GAP = 2 # allowed tracking gap
 HARD_THRESHOLD = 0.8
 SOFT_THRESHOLD = 0.5
-PROB_THRESH = 60
+PROB_THRESH = 40 # a detection above this prob value will initialize a tracker
+MAX_TRACK = 30 # lifetime of a tracker in frames
 CLASSES = ["aeroplane", "bicycle", "bird", "boat", "bottle", "bus", "car", "cat", "chair", "cow", "diningtable", "dog", "horse", "motorbike", "person", "pottedplant", "sheep", "sofa", "train", "tvmonitor"]
-TARGET_CLASS = CLASSES.index('person')
-term_crit = ( cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 1 )
+TARGET_CLASS = CLASSES.index('person') # class index we are trying to generate data for
+term_crit = ( cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 1 ) # termination criteria for openCV CAMShift algorithem
 # end GLOBALS
 
 #=============== HELPER FUNCTIONS=====================
@@ -85,11 +86,12 @@ args = vars(ap.parse_args())
 # # otherwise, we are reading from a video file
 # else:
 #     camera = cv2.VideoCapture(args["video"])
-vidFile = '/home/gili/dev/YOLO/darknet/MVI_2966.MOV'
+vidFile = '/home/gili/dev/YOLO/darknet/2.mp4'
 camera = cv2.VideoCapture(vidFile)
 # initialize the first frame in the video stream
 firstFrame = None
 frame_num = 0
+tot_new_frames = 0
 tracks = {}
 results = []
 
@@ -103,11 +105,16 @@ while True:
     for t in tracks.keys():
         for i in range(len(tracks[t])):
             if tracks[t][i]['frames'][-1]['frameNum'] + ALLOWED_GAP < frame_num:
-                trackDel.append(t)
-    for t in trackDel:
-        del(tracks[t][i])
+                trackDel.append((t,i))
+            elif len(tracks[t][i]['frames']) > MAX_TRACK:
+                trackDel.append((t,i))
         if not tracks[t]:
+            trackDel.append((t,-1)) #erase the entire track
+    for t,i in trackDel:
+        if i==-1:
             del(tracks[t])
+        else:
+            del(tracks[t][i])
     
     # grab the current frame
     (grabbed, frame) = camera.read()
@@ -120,7 +127,7 @@ while True:
         frame_num+=1
         print "working on frame: %d" %frame_num
     #TODO: figure out if any additional resizing is necessary
-    frame = imutils.resize(frame,width=480)
+    #frame = imutils.resize(frame, height=448)
     # feed forward to network
     yoloRes = myYolo.test(frame)
     yoloRects = {}
@@ -149,7 +156,8 @@ while True:
                     if rectOverlap(tracks[c][i]['frames'][-1]['rect'], yoloRects[c], threshhold=0.7):
                         #got a match between an exising track and a detection. write to results!
                         if 'yoloRect' not in tracks[c][i]['frames'][-1]:
-                            print "======================MATCH========================"
+                            tot_new_frames += len(tracks[c][i]['frames'])-2
+                            print "======================MATCHED %d frames========================" %(len(tracks[c][i]['frames'])-2)
                             results.append(copy.deepcopy(tracks[c][i]))
                         # reset track history 
                         tracks[c][i]={'frames':[{
@@ -162,6 +170,8 @@ while True:
                         del(yoloRects[c])
                         matched = True
                         break
+                    else:
+                        print "pass"
                 if not matched:
                     # a track with this class exists however no overlap with detections.
                     # should start new tracker in this class
@@ -181,21 +191,29 @@ while True:
                 }]}]
         # prep this frame for tracking
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        mask = cv2.inRange(hsv, np.array((0., 60.,32.)), np.array((180.,255.,255.)))
         # step forward on all trackers that don't have a detection on this frame
         for c in tracks:
             for t in tracks[c]:
                 if t['frames'][-1]['frameNum']<frame_num:
+                    
                     # tracking preps
                     track_window = tuple(t['frames'][-1]['rect'])
-                    roi = frame[int(track_window[0]):int(track_window[0]+track_window[2]), int(track_window[1]):int(track_window[1]+track_window[3])]
-                    hsv_roi =  cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
-                    mask = cv2.inRange(hsv_roi, np.array((0., 60.,32.)), np.array((180.,255.,255.)))
-                    roi_hist = cv2.calcHist([hsv_roi],[0],mask,[180],[0,180])
-                    cv2.normalize(roi_hist,roi_hist,0,255,cv2.NORM_MINMAX)
-                    
+                    hsv_roi = hsv[int(track_window[1]):int(track_window[1]+track_window[3]),int(track_window[0]):int(track_window[0]+track_window[2])]
+                    #hsv_roi =  cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
+                    mask_roi = cv2.inRange(hsv_roi, np.array((0., 60.,32.)), np.array((180.,255.,255.)))
+                    roi_hist = cv2.calcHist([hsv_roi],[0],mask_roi,[180],[0,180])
+                    roi_hist = cv2.normalize(roi_hist,roi_hist,0,255,cv2.NORM_MINMAX)
+                    #roi_hist = roi_hist.reshape(-1) #from provided examples. kills the tracker
                     dst = cv2.calcBackProject([hsv],[0],roi_hist,[0,180],1)
                     # apply meanshift to get the new location
+                    dst = dst & mask # from provided examples. not explained. not performed in an other examples found
                     ret, track_window = cv2.CamShift(dst, track_window, term_crit)
+                    pts = np.int0(cv2.cv.BoxPoints(ret))
+                    xmin, ymin = pts.min(axis=0)
+                    xmax, ymax = pts.max(axis=0)
+                    #track_window = (max(xmin,0), max(ymin,0), xmax-xmin, ymax-ymin)
+                    cv2.polylines(frame, [pts], True, (0, 0, 255), 2)
                     x,y,w,h = track_window
                     cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 0), 2)
                     key = cv2.waitKey(1) & 0xFF
@@ -220,3 +238,32 @@ while True:
 # cleanup the camera and close any open windows
 camera.release()
 cv2.destroyAllWindows()
+print "got %d results holding %d new frames" %(len(results), tot_new_frames)
+
+# Generating images from results
+# prep folder
+# traverse results
+image_counter=0
+for r in results:
+    frame_counter_offset = r['frames'][0]['frame_num']
+    c = r['frames'][0]['class']
+    #TODO: make img size dynamic
+    imWidth = 448.0
+    imHeight = 448.0
+    for i in range(1,len(r['frames'])-1): # first and last frames are the original detections
+        image_counter+=1
+        # get frame from original video file
+        track_frame = camera.set(cv2.cv.CV_CAP_PROP_POS_FRAMES,frame_counter_offset + i)
+        # save frame to destination
+        cv2.imwrite("%s/images/%d.jpg" %(res_dir, image_counter), track_frame)
+        # save rect data to txt file of same name
+        x,y,w,h = r['frames'][i]['rect']
+        xc = (x + w) / 2.0 / imWidth
+        yc = (y + h) / 2.0 / imHeight
+        w /= imWidth
+        h /= imHeight
+        rect_label = "%s %f %f %f %f" %(c, xc, yc, w, h)
+        txt_path = '%s/labels/%d.txt' %(res_dir,image_counter)
+        text_file = open(txt_path, "w")
+        text_file.write(rect_label)
+        text_file.close()
