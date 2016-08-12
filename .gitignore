@@ -3,6 +3,8 @@
 *.csv
 *.out
 *.png
+*.weights
+*.mp4
 mnist/
 data/
 caffe/
